@@ -1,5 +1,5 @@
 import { useStore } from "../store";
-import type { Colors } from "../types";
+import type { Colors } from "../constants";
 
 type ColorPickerProps = {
   name: Colors;
@@ -25,13 +25,18 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({ name }) => {
         value={colors.shades.length}
         onChange={(e) => setLevels(name, e.currentTarget.valueAsNumber)}
       />
-      <ul>
+      <ol>
         {colors.shades.map((shade) => (
           <li key={shade}>
-            <div style={{ backgroundColor: shade }}>{shade}</div>
+            <div
+              style={{
+                backgroundColor: shade,
+                height: `${15 / colors.shades.length}rem`,
+              }}
+            />
           </li>
         ))}
-      </ul>
+      </ol>
     </details>
   );
 };

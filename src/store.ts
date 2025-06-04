@@ -1,32 +1,18 @@
 import { create } from "zustand";
 import { combine } from "zustand/middleware";
-import type { Colors } from "./types";
 import { generateColorShades } from "./utilities";
-import {
-  INITIAL_COLOR_LEVELS,
-  INITIAL_NEUTRAL_COLOR,
-  INITIAL_PRIMARY_COLOR,
-} from "./constants";
+import { COLORS, INITIAL_COLOR_LEVELS, type Colors } from "./constants";
+import { getTypedObjectEntries } from "@yamori-shared/react-utilities";
 
 export const useStore = create(
   combine(
     {
-      colors: {
-        primary: {
-          base: INITIAL_PRIMARY_COLOR,
-          shades: generateColorShades(
-            INITIAL_PRIMARY_COLOR,
-            INITIAL_COLOR_LEVELS
-          ),
-        },
-        neutral: {
-          base: INITIAL_NEUTRAL_COLOR,
-          shades: generateColorShades(
-            INITIAL_NEUTRAL_COLOR,
-            INITIAL_COLOR_LEVELS
-          ),
-        },
-      } satisfies Record<Colors, { base: string; shades: string[] }>,
+      colors: Object.fromEntries(
+        getTypedObjectEntries(COLORS).map(([name, base]) => [
+          name,
+          { base, shades: generateColorShades(base, INITIAL_COLOR_LEVELS) },
+        ])
+      ) as Record<Colors, { base: string; shades: string[] }>,
     },
     (set) => ({
       setBase: (color: Colors, base: string) =>

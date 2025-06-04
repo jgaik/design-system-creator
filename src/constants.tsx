@@ -1,8 +1,13 @@
 import type { SupportedTag } from "./types";
 
-export const INITIAL_PRIMARY_COLOR = "#4285f4";
 export const INITIAL_COLOR_LEVELS = 5;
-export const INITIAL_NEUTRAL_COLOR = "#cccccc";
+
+export const COLORS = {
+  primary: "#4285f4",
+  neutral: "#cccccc",
+};
+
+export type Colors = keyof typeof COLORS;
 
 export const SUPPORTED_TAGS: Array<SupportedTag> = [
   {

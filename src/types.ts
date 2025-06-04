@@ -10,5 +10,3 @@ export type SupportedTag = {
   }>;
   states: Array<"hover" | "active" | "disabled" | "visited">;
 };
-
-export type Colors = "primary" | "neutral";
