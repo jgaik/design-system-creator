@@ -1,13 +1,23 @@
 import type { SupportedTag } from "./types";
 
-export const INITIAL_COLOR_LEVELS = 5;
+export const INITIAL_COLOR_STEP = 20;
 
-export const COLORS = {
-  primary: "#4285f4",
-  neutral: "#cccccc",
+export const INITIAL_STATE = {
+  colors: {
+    primary: "#4285f4",
+    neutral: "#cccccc",
+  },
+  mappings: {
+    surface: {
+      primary: "neutral-500",
+      action: "primary-500",
+    },
+  },
 };
 
-export type Colors = keyof typeof COLORS;
+export type StoreState = typeof INITIAL_STATE;
+
+export type Colors = keyof StoreState["colors"];
 
 export const SUPPORTED_TAGS: Array<SupportedTag> = [
   {

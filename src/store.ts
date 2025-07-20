@@ -1,35 +1,49 @@
 import { create } from "zustand";
 import { combine } from "zustand/middleware";
-import { generateColorShades } from "./utilities";
-import { COLORS, INITIAL_COLOR_LEVELS, type Colors } from "./constants";
+import { generateBaseColor, generateColorShades } from "./utilities";
+import { INITIAL_COLOR_STEP, INITIAL_STATE, type Colors } from "./constants";
 import { getTypedObjectEntries } from "@yamori-shared/react-utilities";
 
 export const useStore = create(
   combine(
     {
       colors: Object.fromEntries(
-        getTypedObjectEntries(COLORS).map(([name, base]) => [
+        getTypedObjectEntries(INITIAL_STATE["colors"]).map(([name, base]) => [
           name,
-          { base, shades: generateColorShades(base, INITIAL_COLOR_LEVELS) },
+          {
+            base,
+            step: INITIAL_COLOR_STEP,
+            shades: generateColorShades(base, INITIAL_COLOR_STEP, name),
+          },
         ])
-      ) as Record<Colors, { base: string; shades: string[] }>,
+      ) as Record<
+        Colors,
+        {
+          base: string;
+          step: number;
+          shades: Array<{ key: number; shade: string }>;
+        }
+      >,
+      // mappings: Object.fromEntries(getTypedObjectEntries(INITIAL_STATE['mappings']).map()),
     },
     (set) => ({
       setBase: (color: Colors, base: string) =>
         set((state) => {
-          const levels = state.colors[color].shades.length;
+          const step = state.colors[color].step;
+          const updatedBase = generateBaseColor(base, color);
 
           return {
             colors: {
               ...state.colors,
               [color]: {
-                base,
-                shades: generateColorShades(base, levels),
+                base: updatedBase,
+                step,
+                shades: generateColorShades(updatedBase, step, color),
               },
             },
           };
         }),
-      setLevels: (color: Colors, levels: number) =>
+      setStep: (color: Colors, step: number) =>
         set((state) => {
           const base = state.colors[color].base;
 
@@ -38,7 +52,8 @@ export const useStore = create(
               ...state.colors,
               [color]: {
                 base,
-                shades: generateColorShades(base, levels),
+                step,
+                shades: generateColorShades(base, step, color),
               },
             },
           };

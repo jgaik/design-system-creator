@@ -70,17 +70,37 @@ function hslToHex({ hue, saturation, lightness }: ColorHSL) {
   );
 }
 
-export function generateColorShades(baseHex: string, levels: number) {
-  const hsl = hexToHsl(baseHex);
-  const lightRange = [95, 10]; // Lightest to darkest L%
-  const shades = [];
+export function generateBaseColor(baseHex: string, color: string): string {
+  const { hue, saturation } = hexToHsl(baseHex);
 
-  for (let idx = 0; idx < levels; idx++) {
-    const lightness = Math.round(
-      lightRange[0] - (idx * (lightRange[0] - lightRange[1])) / (levels - 1)
-    );
-    shades.push(hslToHex({ ...hsl, lightness }));
+  return hslToHex({
+    hue,
+    saturation: color === "neutral" ? Math.min(saturation, 10) : saturation,
+    lightness: 50,
+  });
+}
+
+export function generateColorShades(
+  baseHex: string,
+  stepSize: number,
+  color: string
+) {
+  const hsl = hexToHsl(baseHex);
+  let steps = Math.floor(50 / stepSize);
+  if (50 % stepSize === 0) steps -= 1;
+  const levels = steps * 2 + 1;
+
+  let lightnessList = Array.from(
+    { length: levels },
+    (_, index) => 50 + (index - steps) * stepSize
+  );
+
+  if (color === "neutral") {
+    lightnessList = [0, ...lightnessList, 100];
   }
 
-  return shades;
+  return lightnessList.map((lightness) => ({
+    key: 100 - lightness,
+    shade: hslToHex({ ...hsl, lightness }),
+  }));
 }

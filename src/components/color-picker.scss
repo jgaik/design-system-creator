@@ -1,0 +1,15 @@
+.color-picker {
+  &__shades {
+    list-style: none;
+
+    li {
+      position: relative;
+
+      &::before {
+        content: attr(data-step);
+        position: absolute;
+        left: -2em;
+      }
+    }
+  }
+}

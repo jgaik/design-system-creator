@@ -1,5 +1,7 @@
 import { useStore } from "../store";
 import type { Colors } from "../constants";
+import { BemClassNamesCreator } from "@yamori-shared/react-utilities";
+import "./color-picker.scss";
 
 type ColorPickerProps = {
   name: Colors;
@@ -8,7 +10,15 @@ type ColorPickerProps = {
 export const ColorPicker: React.FC<ColorPickerProps> = ({ name }) => {
   const colors = useStore((state) => state.colors[name]);
   const setBase = useStore((state) => state.setBase);
-  const setLevels = useStore((state) => state.setLevels);
+  const setStep = useStore((state) => state.setStep);
+
+  const bemClassNames = BemClassNamesCreator.create(
+    "color-picker",
+    undefined,
+    "shades"
+  );
+
+  const maxShades = name === "neutral" ? 19 : 17;
 
   return (
     <details open>
@@ -20,18 +30,20 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({ name }) => {
       />
       <input
         type="range"
-        min={3}
-        max={10}
-        value={colors.shades.length}
-        onChange={(e) => setLevels(name, e.currentTarget.valueAsNumber)}
+        min={5}
+        max={45}
+        step={5}
+        value={colors.step}
+        onChange={(e) => setStep(name, e.currentTarget.valueAsNumber)}
       />
-      <ol>
-        {colors.shades.map((shade) => (
-          <li key={shade}>
+      {colors.step}
+      <ol className={bemClassNames["shades"]}>
+        {colors.shades.map(({ key, shade: backgroundColor }) => (
+          <li key={key} data-step={key}>
             <div
               style={{
-                backgroundColor: shade,
-                height: `${15 / colors.shades.length}rem`,
+                backgroundColor,
+                height: `${(1.5 * maxShades) / colors.shades.length}rem`,
               }}
             />
           </li>
