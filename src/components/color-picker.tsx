@@ -1,5 +1,5 @@
 import { useStore } from "../store";
-import type { Colors } from "../constants";
+import type { Colors } from "../types";
 import { BemClassNamesCreator } from "@yamori-shared/react-utilities";
 import "./color-picker.scss";
 
@@ -9,8 +9,8 @@ type ColorPickerProps = {
 
 export const ColorPicker: React.FC<ColorPickerProps> = ({ name }) => {
   const colors = useStore((state) => state.colors[name]);
-  const setBase = useStore((state) => state.setBase);
-  const setStep = useStore((state) => state.setStep);
+  const setBase = useStore((state) => state.setColorBase);
+  const setStep = useStore((state) => state.setColorStep);
 
   const bemClassNames = BemClassNamesCreator.create(
     "color-picker",
@@ -38,7 +38,7 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({ name }) => {
       />
       {colors.step}
       <ol className={bemClassNames["shades"]}>
-        {colors.shades.map(({ key, shade: backgroundColor }) => (
+        {colors.shades.map(([key, backgroundColor]) => (
           <li key={key} data-step={key}>
             <div
               style={{

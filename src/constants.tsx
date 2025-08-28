@@ -8,16 +8,37 @@ export const INITIAL_STATE = {
     neutral: "#cccccc",
   },
   mappings: {
-    surface: {
-      primary: "neutral-500",
-      action: "primary-500",
+    bg: {
+      "default": "neutral-0",
+      "field": "neutral:0",
+      "field-disabled": "neutral:-1",
+      "action": "primary:0",
+      "action-hover": "primary:-1",
+      "action-active": "primary:1",
+      "action-disabled": "neutral:-1",
+    },
+    text: {
+      "default": "neutral:1",
+      "field": "neutral:1",
+      "field-placeholder": "neutral:0",
+      "action": "primary:0",
+      "action-hover": "primary:-1",
+      "action-active": "primary:1",
+      "action-disabled": "neutral:-1",
+      "disabled": "neutral:-1",
+    },
+    border: {
+      "default": "neutral:0",
+      "field": "neutral:1",
+      "field-focus": "primary:0",
+      "field-disabled": "neutral:-1",
+      "action": "primary:0",
+      "action-hover": "primary:-1",
+      "action-active": "primary:1",
+      "action-disabled": "neutral:-1",
     },
   },
 };
-
-export type StoreState = typeof INITIAL_STATE;
-
-export type Colors = keyof StoreState["colors"];
 
 export const SUPPORTED_TAGS: Array<SupportedTag> = [
   {

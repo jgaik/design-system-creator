@@ -1,8 +1,4 @@
-type ColorHSL = {
-  hue: number;
-  saturation: number;
-  lightness: number;
-};
+import type { ColorHSL } from "./types";
 
 function hexToHsl(hex: string): ColorHSL {
   hex = hex.replace("#", "");
@@ -99,8 +95,7 @@ export function generateColorShades(
     lightnessList = [0, ...lightnessList, 100];
   }
 
-  return lightnessList.map((lightness) => ({
-    key: 100 - lightness,
-    shade: hslToHex({ ...hsl, lightness }),
-  }));
+  return lightnessList.map(
+    (lightness) => [100 - lightness, hslToHex({ ...hsl, lightness })] as const
+  );
 }

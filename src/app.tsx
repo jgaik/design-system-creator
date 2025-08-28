@@ -1,10 +1,16 @@
-import { Colors, Styles } from "./components";
+import {
+  ColorPicker,
+  MappingPicker,
+  SettingsSection,
+  Styles,
+} from "./components";
 
 export default function App() {
   return (
     <main>
       <Styles />
-      <Colors />
+      <SettingsSection setting="colors" render={ColorPicker} />
+      <SettingsSection setting="mappings" render={MappingPicker} />
     </main>
   );
 }

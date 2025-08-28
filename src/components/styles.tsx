@@ -3,13 +3,31 @@ import { useStore } from "../store";
 
 export const Styles: React.FC = () => {
   const colors = useStore((state) => state.colors);
+  const mappings = useStore((state) => state.mappings);
+
+  console.log(
+    getTypedObjectEntries(mappings)
+      .map(([name, value]) =>
+        Object.entries(value).map(
+          ([key, mapping]) => `--${name}-${key}: var(--color-${mapping});`
+        )
+      )
+      .flat()
+      .join("\n\t")
+  );
 
   return (
     <style>{`:root {
 \t${getTypedObjectEntries(colors)
       .map(([name, value]) =>
-        value.shades.map(
-          ({ key, shade }) => `--color-${name}-${key}: ${shade};`
+        value.shades.map(([key, shade]) => `--color-${name}-${key}: ${shade};`)
+      )
+      .flat()
+      .join("\n\t")}
+\t${getTypedObjectEntries(mappings)
+      .map(([name, value]) =>
+        Object.entries(value).map(
+          ([key, mapping]) => `--${name}-${key}: var(--color-${mapping});`
         )
       )
       .flat()
