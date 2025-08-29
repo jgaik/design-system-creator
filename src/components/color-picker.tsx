@@ -1,7 +1,5 @@
 import { useStore } from "../store";
 import type { Colors } from "../types";
-import { BemClassNamesCreator } from "@yamori-shared/react-utilities";
-import "./color-picker.scss";
 
 type ColorPickerProps = {
   name: Colors;
@@ -12,43 +10,42 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({ name }) => {
   const setBase = useStore((state) => state.setColorBase);
   const setStep = useStore((state) => state.setColorStep);
 
-  const bemClassNames = BemClassNamesCreator.create(
-    "color-picker",
-    undefined,
-    "shades"
-  );
-
-  const maxShades = name === "neutral" ? 19 : 17;
-
   return (
-    <details open>
-      <summary>{name}</summary>
-      <input
-        type="color"
-        onChange={(e) => setBase(name, e.currentTarget.value)}
-        value={colors.base}
-      />
-      <input
-        type="range"
-        min={5}
-        max={45}
-        step={5}
-        value={colors.step}
-        onChange={(e) => setStep(name, e.currentTarget.valueAsNumber)}
-      />
-      {colors.step}
-      <ol className={bemClassNames["shades"]}>
-        {colors.shades.map(([key, backgroundColor]) => (
-          <li key={key} data-step={key}>
-            <div
-              style={{
-                backgroundColor,
-                height: `${(1.5 * maxShades) / colors.shades.length}rem`,
-              }}
-            />
-          </li>
-        ))}
-      </ol>
-    </details>
+    <>
+      <tr>
+        <th scope="row" rowSpan={colors.shades.length + 1}>
+          {name}
+        </th>
+        <td colSpan={2}>
+          <input
+            type="color"
+            onChange={(e) => setBase(name, e.currentTarget.value)}
+            value={colors.base}
+          />
+          <input
+            type="range"
+            min={5}
+            max={45}
+            step={5}
+            value={colors.step}
+            onChange={(e) => setStep(name, e.currentTarget.valueAsNumber)}
+          />
+          {colors.step}
+        </td>
+      </tr>
+      {colors.shades.map(([key, backgroundColor]) => (
+        <tr key={key} data-step={key}>
+          <td
+            style={{
+              backgroundColor,
+            }}
+          />
+
+          <td>
+            --color-{name}-{key}
+          </td>
+        </tr>
+      ))}
+    </>
   );
 };

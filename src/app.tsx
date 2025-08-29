@@ -1,16 +1,14 @@
-import {
-  ColorPicker,
-  MappingPicker,
-  SettingsSection,
-  Styles,
-} from "./components";
+import { getTypedObjectKeys } from "@yamori-shared/react-utilities";
+import { SettingsSection, Styles } from "./components";
+import { INITIAL_STATE } from "./constants";
 
 export default function App() {
   return (
     <main>
       <Styles />
-      <SettingsSection setting="colors" render={ColorPicker} />
-      <SettingsSection setting="mappings" render={MappingPicker} />
+      {getTypedObjectKeys(INITIAL_STATE).map((setting) => (
+        <SettingsSection key={setting} setting={setting} />
+      ))}
     </main>
   );
 }

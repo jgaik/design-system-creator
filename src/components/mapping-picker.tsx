@@ -41,43 +41,52 @@ export const MappingPicker: React.FC<MappingPickerProps> = ({ name }) => {
     return { backgroundColor, color };
   };
 
+  const mappingEntries = useMemo(() => Object.entries(mapping), [mapping]);
+
   return (
-    <details open>
-      <summary>{name}</summary>
-      <ul>
-        {Object.entries(mapping).map(([mappingName, mappingValue]) => (
-          <li key={mappingName}>
-            <label>
-              {name}-{mappingName}
-              <select
-                onFocus={(e) => {
-                  e.currentTarget.size = allShades.length;
-                }}
-                onBlur={(e) => {
-                  e.currentTarget.size = 0;
-                }}
-                onChange={(e) => {
-                  setMapping(name, mappingName, e.currentTarget.value);
-                  e.currentTarget.size = 1;
-                  e.currentTarget.blur();
-                }}
-                style={getSelectStyle(mappingValue)}
-                value={mappingValue}
-              >
-                {allShades.map(([shadeName, shadeColor, color]) => (
-                  <option
-                    key={shadeName}
-                    value={shadeName}
-                    style={{ backgroundColor: shadeColor, color }}
-                  >
-                    {shadeName}
-                  </option>
-                ))}
-              </select>
+    <>
+      <tr>
+        <th scope="row" rowSpan={mappingEntries.length + 1}>
+          {name}
+        </th>
+      </tr>
+      {mappingEntries.map(([mappingName, mappingValue]) => (
+        <tr key={mappingName}>
+          <td>
+            <label htmlFor={mappingName}>
+              --{name}-{mappingName}
             </label>
-          </li>
-        ))}
-      </ul>
-    </details>
+          </td>
+          <td>
+            <select
+              id={mappingName}
+              onFocus={(e) => {
+                e.currentTarget.size = allShades.length;
+              }}
+              onBlur={(e) => {
+                e.currentTarget.size = 0;
+              }}
+              onChange={(e) => {
+                setMapping(name, mappingName, e.currentTarget.value);
+                e.currentTarget.size = 1;
+                e.currentTarget.blur();
+              }}
+              style={getSelectStyle(mappingValue)}
+              value={mappingValue}
+            >
+              {allShades.map(([shadeName, shadeColor, color]) => (
+                <option
+                  key={shadeName}
+                  value={shadeName}
+                  style={{ backgroundColor: shadeColor, color }}
+                >
+                  {shadeName}
+                </option>
+              ))}
+            </select>
+          </td>
+        </tr>
+      ))}
+    </>
   );
 };
