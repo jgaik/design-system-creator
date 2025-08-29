@@ -16,7 +16,7 @@ export const Styles: React.FC = () => {
 \t${getTypedObjectEntries(mappings)
       .map(([name, value]) =>
         Object.entries(value).map(
-          ([key, mapping]) => `--${name}-${key}: var(--color-${mapping});`
+          ([key, mapping]) => `--${name}-${key}: var(${mapping});`
         )
       )
       .flat()

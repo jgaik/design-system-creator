@@ -31,10 +31,10 @@ function createInitialState() {
       const [shade] =
         shades[Math.floor(shades.length / 2) + parseInt(shadeString)];
 
-      return `${color}-${shade}`;
+      return `--color-${color}-${shade}`;
     }
 
-    return value;
+    return `--color-${value}`;
   };
 
   const mappings = Object.fromEntries(
