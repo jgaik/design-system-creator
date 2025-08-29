@@ -49,7 +49,7 @@ export const SUPPORTED_TAGS: Array<SupportedTag> = [
         property: "borderColor",
       },
       {
-        type: "surface",
+        type: "bg",
         property: "backgroundColor",
       },
       {
@@ -78,7 +78,7 @@ export const SUPPORTED_TAGS: Array<SupportedTag> = [
     },
     customization: [
       {
-        type: "surface",
+        type: "bg",
         property: "accentColor",
       },
     ],
@@ -92,7 +92,7 @@ export const SUPPORTED_TAGS: Array<SupportedTag> = [
     },
     customization: [
       {
-        type: "surface",
+        type: "bg",
         property: "accentColor",
       },
     ],

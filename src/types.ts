@@ -6,7 +6,7 @@ export type SupportedTag = {
   props?: HTMLProps<HTMLElement>;
   tag: keyof JSX.IntrinsicElements;
   customization: Array<{
-    type: "surface" | "border" | "text";
+    type: Mappings;
     property: keyof CSSProperties;
   }>;
   states: Array<"hover" | "active" | "disabled" | "visited">;

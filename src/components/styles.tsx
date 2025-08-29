@@ -5,17 +5,6 @@ export const Styles: React.FC = () => {
   const colors = useStore((state) => state.colors);
   const mappings = useStore((state) => state.mappings);
 
-  console.log(
-    getTypedObjectEntries(mappings)
-      .map(([name, value]) =>
-        Object.entries(value).map(
-          ([key, mapping]) => `--${name}-${key}: var(--color-${mapping});`
-        )
-      )
-      .flat()
-      .join("\n\t")
-  );
-
   return (
     <style>{`:root {
 \t${getTypedObjectEntries(colors)
