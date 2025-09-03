@@ -17,7 +17,7 @@ export const MappingPickerRow: React.FC<MappingPickerRowProps> = ({
   name,
   value,
 }) => {
-  const shades = useStore((state) => state.colors);
+  const shades = useStore((state) => state.color);
   const setMapping = useStore((state) => state.setMapping);
 
   const mappingVariable = `--${mapping}-${name}`;
@@ -26,26 +26,27 @@ export const MappingPickerRow: React.FC<MappingPickerRowProps> = ({
     () =>
       getTypedObjectEntries(shades)
         .map(([color, info]) =>
-          info.shades.map(
-            ([lightness, shade]) =>
-              [
-                `--color-${color}-${lightness}`,
-                shade,
-                lightness >= 50 ? "white" : "black",
-              ] as const
-          )
+          Object.keys(info)
+            .filter((key) => /^\d+$/.test(key))
+            .map(
+              (lightness) =>
+                [
+                  `--color-${color}-${lightness}`,
+                  parseInt(lightness, 10) >= 50 ? "white" : "black",
+                ] as const
+            )
         )
         .flat(),
     [shades]
   );
 
   const getSelectStyle = (mappingValue: string) => {
-    const [, backgroundColor, color] = getNonNullable(
+    const [shadeName, color] = getNonNullable(
       shadesInfo.find(([shade]) => shade === mappingValue),
       "shade for a mapping value"
     );
 
-    return { backgroundColor, color };
+    return { backgroundColor: `var(${shadeName})`, color };
   };
 
   return (
@@ -70,11 +71,11 @@ export const MappingPickerRow: React.FC<MappingPickerRowProps> = ({
           style={getSelectStyle(value)}
           value={value}
         >
-          {shadesInfo.map(([shadeName, shadeColor, color]) => (
+          {shadesInfo.map(([shadeName, color]) => (
             <option
               key={shadeName}
               value={shadeName}
-              style={{ backgroundColor: shadeColor, color }}
+              style={{ backgroundColor: `var(${shadeName})`, color }}
             >
               {shadeName}
             </option>

@@ -21,6 +21,7 @@ export const MappingPicker: React.FC<MappingPickerProps> = ({ name }) => {
       </tr>
       {mappingEntries.map(([mappingName, mappingValue]) => (
         <MappingPickerRow
+          key={mappingName}
           mapping={name}
           name={mappingName}
           value={mappingValue}

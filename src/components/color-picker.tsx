@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { useStore } from "../store";
 import type { Colors } from "../types";
 
@@ -6,46 +7,49 @@ type ColorPickerProps = {
 };
 
 export const ColorPicker: React.FC<ColorPickerProps> = ({ name }) => {
-  const colors = useStore((state) => state.colors[name]);
+  const { base, step, ...rest } = useStore((state) => state.color[name]);
   const setBase = useStore((state) => state.setColorBase);
   const setStep = useStore((state) => state.setColorStep);
+
+  const shades = useMemo(() => Object.keys(rest), [rest]);
 
   return (
     <>
       <tr>
-        <th scope="row" rowSpan={colors.shades.length + 1}>
+        <th scope="row" rowSpan={shades.length + 1}>
           {name}
         </th>
         <td colSpan={2}>
           <input
             type="color"
             onChange={(e) => setBase(name, e.currentTarget.value)}
-            value={colors.base}
+            value={base}
           />
           <input
             type="range"
             min={5}
             max={45}
             step={5}
-            value={colors.step}
+            value={step}
             onChange={(e) => setStep(name, e.currentTarget.valueAsNumber)}
           />
-          {colors.step}
+          {step}
         </td>
       </tr>
-      {colors.shades.map(([key, backgroundColor]) => (
-        <tr key={key} data-step={key}>
-          <td
-            style={{
-              backgroundColor,
-            }}
-          />
+      {shades.map((shade) => {
+        const variable = `--color-${name}-${shade}`;
 
-          <td>
-            --color-{name}-{key}
-          </td>
-        </tr>
-      ))}
+        return (
+          <tr key={variable}>
+            <td
+              style={{
+                backgroundColor: `var(${variable})`,
+              }}
+            />
+            <td>{variable}</td>
+          </tr>
+        );
+      })}
     </>
   );
 };

@@ -3,7 +3,7 @@ import type { SupportedTag } from "./types";
 export const INITIAL_COLOR_STEP = 20;
 
 export const INITIAL_STATE = {
-  colors: {
+  color: {
     primary: "#4285f4",
     neutral: "#cccccc",
   },

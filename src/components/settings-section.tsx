@@ -10,7 +10,7 @@ const SETTING_RENDER: {
     columns: Array<string>;
   };
 } = {
-  colors: {
+  color: {
     render: ColorPicker,
     columns: ["Color", "Shades", "Variables"],
   },

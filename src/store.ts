@@ -6,32 +6,34 @@ import { getTypedObjectEntries } from "@yamori-shared/react-utilities";
 import type { Colors, Mappings } from "./types";
 
 function createInitialState() {
-  const colors = Object.fromEntries(
-    getTypedObjectEntries(INITIAL_STATE["colors"]).map(([name, base]) => [
+  const color = Object.fromEntries(
+    getTypedObjectEntries(INITIAL_STATE["color"]).map(([name, base]) => [
       name,
       {
         base,
         step: INITIAL_COLOR_STEP,
-        shades: generateColorShades(base, INITIAL_COLOR_STEP, name),
+        ...generateColorShades(base, INITIAL_COLOR_STEP, name),
       },
     ])
   ) as unknown as Record<
     Colors,
-    { base: string; step: number; shades: [number, string][] }
+    { base: string; step: number } & Record<number, string>
   >;
 
   const findColor = (value: string) => {
     if (value.includes(":")) {
-      const [color, shadeString] = value.split(":");
+      const [colorName, shadeString] = value.split(":");
 
-      if (!(color in colors)) throw new Error("Incorrect mapping color name");
+      if (!(colorName in color))
+        throw new Error("Incorrect mapping color name");
 
-      const shades = colors[color as Colors].shades;
+      const shades = Object.keys(color[colorName as Colors]).filter((key) =>
+        /^\d+$/.test(key)
+      );
 
-      const [shade] =
-        shades[Math.floor(shades.length / 2) + parseInt(shadeString)];
+      const shadeIdx = Math.floor(shades.length / 2) + parseInt(shadeString);
 
-      return `--color-${color}-${shade}`;
+      return `--color-${colorName}-${shades[shadeIdx]}`;
     }
 
     return `--color-${value}`;
@@ -50,7 +52,7 @@ function createInitialState() {
   ) as unknown as Record<Mappings, Record<string, string>>;
 
   return {
-    colors,
+    color,
     mappings,
   };
 }
@@ -59,32 +61,33 @@ export const useStore = create(
   combine(createInitialState(), (set) => ({
     setColorBase: (color: Colors, base: string) =>
       set((state) => {
-        const step = state.colors[color].step;
+        const step = state.color[color].step;
         const updatedBase = generateBaseColor(base, color);
 
         return {
           ...state,
-          colors: {
-            ...state.colors,
+          color: {
+            ...state.color,
             [color]: {
               base: updatedBase,
               step,
-              shades: generateColorShades(updatedBase, step, color),
+              ...generateColorShades(updatedBase, step, color),
             },
           },
         };
       }),
     setColorStep: (color: Colors, step: number) =>
       set((state) => {
-        const base = state.colors[color].base;
+        const base = state.color[color].base;
 
         return {
-          colors: {
-            ...state.colors,
+          ...state,
+          color: {
+            ...state.color,
             [color]: {
               base,
               step,
-              shades: generateColorShades(base, step, color),
+              ...generateColorShades(base, step, color),
             },
           },
         };

@@ -14,7 +14,7 @@ export type SupportedTag = {
 
 export type StoreState = typeof INITIAL_STATE;
 
-export type Colors = keyof StoreState["colors"];
+export type Colors = keyof StoreState["color"];
 
 export type Mappings = keyof StoreState["mappings"];
 
@@ -22,4 +22,8 @@ export type ColorHSL = {
   hue: number;
   saturation: number;
   lightness: number;
+};
+
+export type DeepObject = {
+  [key: string]: string | number | DeepObject;
 };

@@ -1,25 +1,17 @@
-import { getTypedObjectEntries } from "@yamori-shared/react-utilities";
 import { useStore } from "../store";
+import { flattenObject } from "../utilities";
 
 export const Styles: React.FC = () => {
-  const colors = useStore((state) => state.colors);
+  const color = useStore((state) => state.color);
   const mappings = useStore((state) => state.mappings);
 
   return (
     <style>{`:root {
-\t${getTypedObjectEntries(colors)
-      .map(([name, value]) =>
-        value.shades.map(([key, shade]) => `--color-${name}-${key}: ${shade};`)
-      )
-      .flat()
+\t${flattenObject(color)
+      .map(([key, value]) => `--color-${key}: ${value};`)
       .join("\n\t")}
-\t${getTypedObjectEntries(mappings)
-      .map(([name, value]) =>
-        Object.entries(value).map(
-          ([key, mapping]) => `--${name}-${key}: var(${mapping});`
-        )
-      )
-      .flat()
+\n\t${flattenObject(mappings)
+      .map(([key, value]) => `--${key}: var(${value});`)
       .join("\n\t")}
 }`}</style>
   );

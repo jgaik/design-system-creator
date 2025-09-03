@@ -1,4 +1,4 @@
-import type { ColorHSL } from "./types";
+import type { ColorHSL, DeepObject } from "./types";
 
 function hexToHsl(hex: string): ColorHSL {
   hex = hex.replace("#", "");
@@ -80,7 +80,7 @@ export function generateColorShades(
   baseHex: string,
   stepSize: number,
   color: string
-) {
+): Record<number, string> {
   const hsl = hexToHsl(baseHex);
   let steps = Math.floor(50 / stepSize);
   if (50 % stepSize === 0) steps -= 1;
@@ -95,7 +95,25 @@ export function generateColorShades(
     lightnessList = [0, ...lightnessList, 100];
   }
 
-  return lightnessList.map(
-    (lightness) => [100 - lightness, hslToHex({ ...hsl, lightness })] as const
+  return Object.fromEntries(
+    lightnessList.map(
+      (lightness) => [100 - lightness, hslToHex({ ...hsl, lightness })] as const
+    )
   );
+}
+
+export function flattenObject(obj: DeepObject, parentKey = "") {
+  const result: Array<[string, Exclude<DeepObject[string], DeepObject>]> = [];
+
+  for (const [key, value] of Object.entries(obj)) {
+    const fullKey = parentKey ? `${parentKey}-${key}` : key;
+
+    if (typeof value === "object") {
+      result.push(...flattenObject(value, fullKey));
+    } else {
+      result.push([fullKey, value]);
+    }
+  }
+
+  return result;
 }
