@@ -1,43 +1,49 @@
 import { create } from "zustand";
 import { combine } from "zustand/middleware";
 import { generateBaseColor, generateColorShades } from "./utilities";
-import { INITIAL_COLOR_STEP, INITIAL_STATE } from "./constants";
+import {
+  INITIAL_COLOR_STEP,
+  INITIAL_STATE,
+  SUPPORTED_COLORS,
+  SUPPORTED_ELEMENTS,
+} from "./constants";
 import { getTypedObjectEntries } from "@yamori-shared/react-utilities";
-import type { Colors, Mappings } from "./types";
+import type { Colors, ColorsState, Mappings, StoreState } from "./types";
 
-function initializeColorMappings(
-  colors: Record<
-    Colors,
-    { base: string; step: number } & Record<number, string>
-  >
+function generateColorMappings(
+  colors: ColorsState
 ): Record<Mappings, Record<string, string>> {
-  const findColor = (value: string) => {
-    if (value.includes(":")) {
-      const [colorName, shadeString] = value.split(":");
+  const getVariableEntry = (
+    color: Colors,
+    level: [keyof StoreState["mappings"]["color"]["levels"], number]
+  ): [string, string] => {
+    const [levelName, levelIdx] = level;
 
-      if (!(colorName in colors))
-        throw new Error("Incorrect mapping color name");
+    const levelSuffix = levelName ? `-${levelName}` : "";
 
-      const shades = Object.keys(colors[colorName as Colors]).filter((key) =>
-        /^\d+$/.test(key)
-      );
+    const shades = Object.keys(colors[color]).filter((key) =>
+      /^\d+$/.test(key)
+    );
 
-      const shadeIdx = Math.floor(shades.length / 2) + parseInt(shadeString);
+    const baseIdx = Math.floor(shades.length / 2);
 
-      return `--color-${colorName}-${shades[shadeIdx]}`;
-    }
+    const shadeIdx = Math.min(
+      Math.max(baseIdx + levelIdx, 0),
+      shades.length - 1
+    );
 
-    return `--color-${value}`;
+    return [color + levelSuffix, `--color-${color}-${shades[shadeIdx]}`];
   };
 
   return Object.fromEntries(
-    getTypedObjectEntries(INITIAL_STATE["mappings"]).map(([name, base]) => [
+    INITIAL_STATE["mappings"]["color"]["names"].map((name) => [
       name,
       Object.fromEntries(
-        Object.entries(base).map(([subname, defaultValue]) => [
-          subname,
-          findColor(defaultValue),
-        ])
+        SUPPORTED_COLORS.flatMap((color) =>
+          getTypedObjectEntries(
+            INITIAL_STATE["mappings"]["color"]["levels"]
+          ).map((level) => getVariableEntry(color, level))
+        )
       ),
     ])
   ) as unknown as Record<Mappings, Record<string, string>>;
@@ -53,14 +59,27 @@ function createInitialState() {
         ...generateColorShades(base, INITIAL_COLOR_STEP, name),
       },
     ])
-  ) as unknown as Record<
-    Colors,
-    { base: string; step: number } & Record<number, string>
-  >;
+  ) as unknown as ColorsState;
+
+  const elements = Object.fromEntries(
+    SUPPORTED_ELEMENTS.map((element) => [
+      element.name ?? element.tag,
+      Object.fromEntries(
+        ["default", ...element.states].map((state) => [
+          state,
+          element.customization.map((customization) => ({
+            ...customization,
+            value: "none",
+          })),
+        ])
+      ),
+    ])
+  );
 
   return {
     color,
-    mappings: initializeColorMappings(color),
+    mappings: generateColorMappings(color),
+    elements,
   };
 }
 
@@ -98,7 +117,7 @@ export const useStore = create(
         return {
           ...state,
           color: nextColor,
-          mappings: initializeColorMappings(nextColor),
+          mappings: generateColorMappings(nextColor),
         };
       }),
     setMapping: (mapping: Mappings, variable: string, color: string) =>

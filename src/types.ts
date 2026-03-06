@@ -1,10 +1,12 @@
-import type { CSSProperties, HTMLProps, JSX } from "react";
-import type { INITIAL_STATE } from "./constants";
+import type { CSSProperties, JSX } from "react";
+import type { INITIAL_STATE, SUPPORTED_COLORS } from "./constants";
 
-export type SupportedTag = {
+export type SupportedElement = {
   name?: string;
-  props?: HTMLProps<HTMLElement>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  props?: Record<string, any>;
   tag: keyof JSX.IntrinsicElements;
+  style?: CSSProperties;
   customization: Array<{
     type: Mappings;
     property: keyof CSSProperties;
@@ -14,9 +16,11 @@ export type SupportedTag = {
 
 export type StoreState = typeof INITIAL_STATE;
 
-export type Colors = keyof StoreState["color"];
+export type Colors = (typeof SUPPORTED_COLORS)[number];
 
-export type Mappings = keyof StoreState["mappings"];
+export type Mappings = StoreState["mappings"]["color"]["names"][number];
+
+export type MappingsLevels = keyof StoreState["mappings"]["color"]["levels"];
 
 export type ColorHSL = {
   hue: number;
@@ -27,3 +31,8 @@ export type ColorHSL = {
 export type DeepObject = {
   [key: string]: string | number | DeepObject;
 };
+
+export type ColorsState = Record<
+  Colors,
+  { base: string; step: number } & Record<number, string>
+>;

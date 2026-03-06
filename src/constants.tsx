@@ -1,4 +1,5 @@
-import type { SupportedTag } from "./types";
+import { getTypedObjectKeys } from "@yamori-shared/react-utilities";
+import type { SupportedElement } from "./types";
 
 export const INITIAL_COLOR_STEP = 20;
 
@@ -8,41 +9,30 @@ export const INITIAL_STATE = {
     neutral: "#cccccc",
   },
   mappings: {
-    bg: {
-      "default": "neutral-0",
-      "field": "neutral:0",
-      "field-disabled": "neutral:-1",
-      "action": "primary:0",
-      "action-hover": "primary:-1",
-      "action-active": "primary:1",
-      "action-disabled": "neutral:-1",
-    },
-    text: {
-      "default": "neutral:1",
-      "field": "neutral:1",
-      "field-placeholder": "neutral:0",
-      "action": "primary:0",
-      "action-hover": "primary:-1",
-      "action-active": "primary:1",
-      "action-disabled": "neutral:-1",
-      "disabled": "neutral:-1",
-    },
-    border: {
-      "default": "neutral:0",
-      "field": "neutral:1",
-      "field-focus": "primary:0",
-      "field-disabled": "neutral:-1",
-      "action": "primary:0",
-      "action-hover": "primary:-1",
-      "action-active": "primary:1",
-      "action-disabled": "neutral:-1",
+    color: {
+      names: ["bg", "text", "border"] as const,
+      levels: {
+        "softest": -2,
+        "softer": -1,
+        "": 0,
+        "stronger": 1,
+        "strongest": 2,
+      },
     },
   },
 };
 
-export const SUPPORTED_TAGS: Array<SupportedTag> = [
+export const SUPPORTED_COLORS = getTypedObjectKeys(INITIAL_STATE["color"]);
+
+export const SUPPORTED_ELEMENTS: Array<SupportedElement> = [
   {
     tag: "button",
+    props: {
+      children: "button",
+    },
+    style: {
+      all: "unset",
+    },
     customization: [
       {
         type: "border",
@@ -60,8 +50,12 @@ export const SUPPORTED_TAGS: Array<SupportedTag> = [
     states: ["active", "hover", "disabled"],
   },
   {
-    name: "Link",
+    name: "link",
     tag: "a",
+    props: {
+      children: "link",
+      href: "#",
+    },
     customization: [
       {
         type: "text",
@@ -71,7 +65,7 @@ export const SUPPORTED_TAGS: Array<SupportedTag> = [
     states: ["active", "hover", "visited"],
   },
   {
-    name: "Checkbox",
+    name: "checkbox",
     tag: "input",
     props: {
       type: "checkbox",
@@ -85,7 +79,7 @@ export const SUPPORTED_TAGS: Array<SupportedTag> = [
     states: ["active", "hover", "disabled"],
   },
   {
-    name: "Radio",
+    name: "radio",
     tag: "input",
     props: {
       type: "radio",
